@@ -1,0 +1,6 @@
+/vendor/
+/.idea/
+/nbproject/
+/test/coverage/
+/test/log/
+/build/
