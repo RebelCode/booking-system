@@ -59,7 +59,7 @@ class SessionGenerator implements SessionGeneratorInterface
      *
      * @since [*next-version*]
      */
-    public function generate($start, $end, $types)
+    public function generate($start, $end)
     {
         // The start times to process (as keys)
         $starts = [$start => 1];
@@ -76,7 +76,7 @@ class SessionGenerator implements SessionGeneratorInterface
                     continue;
                 }
                 // Iterate all session types
-                foreach ($types as $type) {
+                foreach ($this->sessionTypes as $type) {
                     // Get the next session
                     $session = $type->getSessionAt($s, $start, $end);
                     // If it fits in the range, yield it
