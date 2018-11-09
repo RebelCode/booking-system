@@ -1,6 +1,6 @@
 <?php
 
-namespace Rebelcode\Bookings\Availability;
+namespace RebelCode\Bookings\Availability;
 
 use Dhii\Time\PeriodInterface;
 
