@@ -44,5 +44,10 @@
     "scripts": {
         "test": "phpunit",
         "csfix": "php-cs-fixer fix -vvv"
+    },
+    "extra": {
+        "branch-alias": {
+            "develop": "0.1.x-dev"
+        }
     }
 }
