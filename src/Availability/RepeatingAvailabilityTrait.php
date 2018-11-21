@@ -7,7 +7,7 @@ use stdClass;
 use Traversable;
 
 /**
- * Abstract functionality for a basic repeating availability.
+ * Common functionality for basic repeating availabilities.
  *
  * @since [*next-version*]
  */
@@ -77,13 +77,13 @@ trait RepeatingAvailabilityTrait
     abstract protected function _getFirstOccurrence($rangeStart, $rangeEnd);
 
     /**
-     * Retrieves the next occurrence that fits within the given range and follows a previous occurrence.
+     * Retrieves the next occurrence in a given range that follows a previous occurrence.
      *
      * @since [*next-version*]
      *
      * @param int             $rangeStart The timestamp of the start of the range.
      * @param int             $rangeEnd   The timestamp of the end of the range.
-     * @param PeriodInterface $previous   The previous occurrence. Te return occurrence must come occur after this.
+     * @param PeriodInterface $previous   The previous occurrence. The returned occurrence must occur after this.
      *
      * @return PeriodInterface The next occurrence.
      */
