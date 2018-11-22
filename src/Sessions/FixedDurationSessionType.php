@@ -5,6 +5,7 @@ namespace RebelCode\Bookings\Sessions;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
+use Dhii\Time\PeriodInterface;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 
@@ -59,8 +60,8 @@ class FixedDurationSessionType implements SessionTypeInterface
      * @param int           $duration The duration of sessions, in seconds.
      * @param callable|null $callback Optional filter callback to invoke when a session is created.
      *                                The callback will receive the array session as the first argument (having four
-     *                                keys: "in", "out", "start" and "end"), as well as the range start and end
-     *                                timestamps as the second and third arguments respectively.
+     *                                keys: "in", "out", "start" and "end"), as well as the session generation range
+     *                                as the second argument.
      */
     public function __construct($duration, callable $callback = null)
     {
@@ -73,7 +74,7 @@ class FixedDurationSessionType implements SessionTypeInterface
      *
      * @since [*next-version*]
      */
-    public function getSessionAt($time, $start, $end)
+    public function getSessionAt($time, PeriodInterface $range)
     {
         $endTime = $time + $this->duration;
 
@@ -86,6 +87,6 @@ class FixedDurationSessionType implements SessionTypeInterface
 
         return ($this->callback === null)
             ? $session
-            : call_user_func_array($this->callback, [$session, $start, $end]);
+            : call_user_func_array($this->callback, [$session, $range]);
     }
 }

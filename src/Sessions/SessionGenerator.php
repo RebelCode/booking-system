@@ -4,6 +4,7 @@ namespace RebelCode\Bookings\Sessions;
 
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
+use Dhii\Time\PeriodInterface;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use stdClass;
 use Traversable;
@@ -59,8 +60,11 @@ class SessionGenerator implements SessionGeneratorInterface
      *
      * @since [*next-version*]
      */
-    public function generate($start, $end)
+    public function generate(PeriodInterface $range)
     {
+        $start = $range->getStart();
+        $end   = $range->getEnd();
+
         // The start times to process (as keys)
         $starts = [$start => 1];
         // Keep track of which start times have already been processed
