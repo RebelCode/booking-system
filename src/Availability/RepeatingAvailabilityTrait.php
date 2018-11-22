@@ -49,16 +49,14 @@ trait RepeatingAvailabilityTrait
             ? $range->getEnd()
             : min($this->repeatEnd, $range->getEnd());
 
-        $current = $this->_getFirstOccurrence($start, $end);
+        // Get first period
         $periods = [];
+        $current = $this->_getFirstOccurrence($start, $end);
 
-        while ($current !== null) {
+        // Get all subsequent occurrences that fit in the range
+        while ($current !== null && $current->getStart() < $end) {
             $periods[] = $current;
             $current   = $this->_getNextOccurrence($start, $end, $current);
-
-            if ($current->getStart() > $end) {
-                break;
-            }
         }
 
         return $periods;
