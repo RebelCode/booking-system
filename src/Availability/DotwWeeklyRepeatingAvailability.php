@@ -60,7 +60,8 @@ class DotwWeeklyRepeatingAvailability extends CompositeAvailability
                 ? $firstStart
                 : $start;
             // Calculate the end date using the first period's duration
-            $end = $start->add($duration);
+            $end = clone $start;
+            $end->add($duration);
 
             // Create the availability
             $availabilities[] = new WeeklyRepeatingAvailability(
