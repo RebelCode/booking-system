@@ -98,7 +98,7 @@ class AvailabilitySessionsIterator implements IteratorAggregate
         $this->inner = new AppendIterator();
 
         foreach ($this->availability->getAvailablePeriods($this->range) as $period) {
-            $sessions = $this->generator->generate($period->getStart(), $period->getEnd());
+            $sessions = $this->generator->generate($period);
             $iterator = $this->_normalizeIterator($sessions);
 
             $this->inner->append($iterator);

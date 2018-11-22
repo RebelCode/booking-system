@@ -82,7 +82,7 @@ class SessionGenerator implements SessionGeneratorInterface
                 // Iterate all session types
                 foreach ($this->sessionTypes as $type) {
                     // Get the next session
-                    $session = $type->getSessionAt($s, $start, $end);
+                    $session = $type->getSessionAt($s, $range);
                     // If it fits in the range, yield it
                     // And use its end time as a new start time to process
                     if ($session['start'] < $end && $session['end'] <= $end) {
