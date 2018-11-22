@@ -24,10 +24,10 @@ abstract class AbstractFixedRepeatingAvailability implements AvailabilityInterfa
      *
      * @since [*next-version*]
      *
-     * @param PeriodInterface $firstPeriod
-     * @param                 $repeatFreq
-     * @param                 $repeatEnd
-     * @param DateTimeZone    $timezone
+     * @param PeriodInterface $firstPeriod The first available period.
+     * @param int             $repeatFreq  The repetition frequency, in units.
+     * @param int             $repeatEnd   The date on which repetition ends, as a timestamp.
+     * @param DateTimeZone    $timezone    The timezone for accurate date calculation.
      */
     public function __construct(PeriodInterface $firstPeriod, $repeatFreq, $repeatEnd, $timezone)
     {
