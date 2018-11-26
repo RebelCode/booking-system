@@ -4,8 +4,13 @@ namespace RebelCode\Bookings\Availability;
 
 use DateTime;
 use DateTimeZone;
+use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
+use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Time\PeriodInterface;
+use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use OutOfRangeException;
+use stdClass;
+use Traversable;
 
 /**
  * Partial implementation for fixed repeating availabilities.
@@ -19,17 +24,27 @@ abstract class AbstractFixedRepeatingAvailability implements AvailabilityInterfa
         _getAvailablePeriods as public getAvailablePeriods;
     }
 
+    /* @since [*next-version*] */
+    use NormalizeIterableCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateInvalidArgumentExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use StringTranslatingTrait;
+
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param PeriodInterface $firstPeriod The first available period.
-     * @param int             $repeatFreq  The repetition frequency, in units.
-     * @param int             $repeatEnd   The date on which repetition ends, as a timestamp.
-     * @param DateTimeZone    $timezone    The timezone for accurate date calculation.
+     * @param PeriodInterface            $firstPeriod The first available period.
+     * @param int                        $repeatFreq  The repetition frequency, in units.
+     * @param int                        $repeatEnd   The date on which repetition ends, as a timestamp.
+     * @param DateTimeZone               $timezone    The timezone for accurate date calculation.
+     * @param array|stdClass|Traversable $resourceIds The IDs of the resources that are available.
      */
-    public function __construct(PeriodInterface $firstPeriod, $repeatFreq, $repeatEnd, $timezone)
+    public function __construct(PeriodInterface $firstPeriod, $repeatFreq, $repeatEnd, $timezone, $resourceIds)
     {
         if ($repeatFreq === 0) {
             throw new OutOfRangeException('Repetition frequency cannot be zero');
@@ -41,5 +56,6 @@ abstract class AbstractFixedRepeatingAvailability implements AvailabilityInterfa
         $this->duration     = $this->firstStartDt->diff($this->firstEndDt);
         $this->repeatFreq   = $repeatFreq;
         $this->repeatEnd    = $repeatEnd;
+        $this->resourceIds  = $this->_normalizeIterable($resourceIds);
     }
 }
