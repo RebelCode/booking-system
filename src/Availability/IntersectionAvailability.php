@@ -2,8 +2,11 @@
 
 namespace RebelCode\Bookings\Availability;
 
+use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Factory\FactoryInterface;
+use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Time\PeriodInterface;
+use RebelCode\Bookings\Availability\Util\CreateAvailabilityPeriodCapableTrait;
 use RebelCode\Bookings\Availability\Util\IntersectAvailabilityPeriodsCapableTrait;
 use stdClass;
 use Traversable;
@@ -22,6 +25,15 @@ class IntersectionAvailability implements AvailabilityInterface
     /* @since [*next-version*] */
     use IntersectAvailabilityPeriodsCapableTrait;
 
+    /* @since [*next-version*] */
+    use CreateAvailabilityPeriodCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateInvalidArgumentExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use StringTranslatingTrait;
+
     /**
      * The children availabilities.
      *
@@ -30,15 +42,6 @@ class IntersectionAvailability implements AvailabilityInterface
      * @var AvailabilityInterface[]|stdClass|Traversable
      */
     protected $children;
-
-    /**
-     * Optional availability period factory to use.
-     *
-     * @since [*next-version*]
-     *
-     * @var FactoryInterface|null
-     */
-    protected $periodFactory;
 
     /**
      * Constructor.
@@ -51,7 +54,8 @@ class IntersectionAvailability implements AvailabilityInterface
     public function __construct($children = [], FactoryInterface $periodFactory = null)
     {
         $this->children      = $children;
-        $this->periodFactory = $periodFactory;
+
+        $this->_setAvPeriodFactory($periodFactory);
     }
 
     /**
@@ -96,23 +100,5 @@ class IntersectionAvailability implements AvailabilityInterface
         }
 
         return $results;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _createAvailabilityPeriod($start, $end, $resourceIds)
-    {
-        if ($this->periodFactory === null) {
-            return new AvailabilityPeriod($start, $end, $resourceIds);
-        }
-
-        return $this->periodFactory->make([
-            'start'        => $start,
-            'end'          => $end,
-            'resource_ids' => $resourceIds,
-        ]);
     }
 }
