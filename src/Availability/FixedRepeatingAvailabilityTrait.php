@@ -7,6 +7,8 @@ use DateTime;
 use DateTimeZone;
 use Dhii\Time\PeriodInterface;
 use RebelCode\Bookings\Util\Time\Period;
+use stdClass;
+use Traversable;
 
 /**
  * Common functionality for availabilities that repeat to yield occurrences of fixed durations at fixed intervals.
@@ -53,6 +55,15 @@ trait FixedRepeatingAvailabilityTrait
      * @var DateTimeZone
      */
     protected $timezone;
+
+    /**
+     * The IDs of the resources that are available.
+     *
+     * @since [*next-version*]
+     *
+     * @var array|stdClass|Traversable
+     */
+    protected $resourceIds;
 
     /**
      * {@inheritdoc}
@@ -114,7 +125,8 @@ trait FixedRepeatingAvailabilityTrait
 
         return $this->_createPeriod(
             $start->getTimestamp(),
-            $end->getTimestamp()
+            $end->getTimestamp(),
+            $this->resourceIds
         );
     }
 
@@ -123,14 +135,15 @@ trait FixedRepeatingAvailabilityTrait
      *
      * @since [*next-version*]
      *
-     * @param int $start The start date and time of the period.
-     * @param int $end   The end date and time of the period.
+     * @param int                        $start       The start date and time of the period.
+     * @param int                        $end         The end date and time of the period.
+     * @param array|stdClass|Traversable $resourceIds A list of the IDs of the available resources.
      *
      * @return PeriodInterface The created period instance.
      */
-    protected function _createPeriod($start, $end)
+    protected function _createPeriod($start, $end, $resourceIds)
     {
-        return new Period($start, $end);
+        return new AvailabilityPeriod($start, $end, $resourceIds);
     }
 
     /**
