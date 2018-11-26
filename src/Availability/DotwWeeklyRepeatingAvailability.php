@@ -29,13 +29,15 @@ class DotwWeeklyRepeatingAvailability extends CompositeAvailability
      * @param int                           $repeatFreq    The repetition frequency, in units.
      * @param int                           $repeatEnd     The date on which repetition ends, as a timestamp.
      * @param DateTimeZone                  $timezone      The timezone for accurate date calculation.
+     * @param array|stdClass|Traversable    $resourceIds   The IDs of the resources that are available.
      */
     public function __construct(
         PeriodInterface $firstPeriod,
         $daysOfTheWeek,
         $repeatFreq,
         $repeatEnd,
-        DateTimeZone $timezone
+        DateTimeZone $timezone,
+        $resourceIds
     ) {
         $availabilities = [];
 
@@ -68,7 +70,8 @@ class DotwWeeklyRepeatingAvailability extends CompositeAvailability
                 new Period($start->getTimestamp(), $end->getTimestamp()),
                 $repeatFreq,
                 $repeatEnd,
-                $timezone
+                $timezone,
+                $resourceIds
             );
         }
 
