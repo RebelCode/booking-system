@@ -6,6 +6,7 @@ use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Time\PeriodInterface;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
+use RebelCode\Bookings\Availability\AvailabilityPeriodInterface;
 use stdClass;
 use Traversable;
 
@@ -24,46 +25,16 @@ use Traversable;
  */
 class SessionGenerator implements SessionGeneratorInterface
 {
-    /* @since [*next-version*] */
-    use NormalizeIterableCapableTrait;
-
-    /* @since [*next-version*] */
-    use CreateInvalidArgumentExceptionCapableTrait;
-
-    /* @since [*next-version*] */
-    use StringTranslatingTrait;
-
-    /**
-     * A list of session types to generate in combination with each other.
-     *
-     * @since [*next-version*]
-     *
-     * @var SessionTypeInterface[]|stdClass|Traversable
-     */
-    protected $sessionTypes;
-
-    /**
-     * Constructor.
-     *
-     * @since [*next-version*]
-     *
-     * @param SessionTypeInterface[]|stdClass|Traversable $sessionTypes A list of session types to generate in
-     *                                                                  combination with each other.
-     */
-    public function __construct($sessionTypes)
-    {
-        $this->sessionTypes = $this->_normalizeIterable($sessionTypes);
-    }
-
     /**
      * {@inheritdoc}
      *
      * @since [*next-version*]
      */
-    public function generate(PeriodInterface $range)
+    public function generate(AvailabilityPeriodInterface $period, $sessionTypes)
     {
-        $start = $range->getStart();
-        $end   = $range->getEnd();
+        $start       = $period->getStart();
+        $end         = $period->getEnd();
+        $resourceIds = $period->getResourceIds();
 
         // The start times to process (as keys)
         $starts = [$start => 1];
@@ -80,12 +51,13 @@ class SessionGenerator implements SessionGeneratorInterface
                     continue;
                 }
                 // Iterate all session types
-                foreach ($this->sessionTypes as $type) {
+                foreach ($sessionTypes as $sessionType) {
                     // Get the next session
-                    $session = $type->getSessionAt($s, $range);
+                    $session = $sessionType->getSessionAt($s, $period);
                     // If it fits in the range, yield it
                     // And use its end time as a new start time to process
                     if ($session['start'] < $end && $session['end'] <= $end) {
+                        $session['resource_ids']    = $resourceIds;
                         $newStarts[$session['out']] = 1;
 
                         yield $session;
