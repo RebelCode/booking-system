@@ -19,8 +19,13 @@ class WeeklyRepeatingAvailability extends DailyRepeatingAvailability
      *
      * @since [*next-version*]
      */
-    public function __construct(PeriodInterface $firstPeriod, $repeatFreq, $repeatEnd, DateTimeZone $timezone)
-    {
-        parent::__construct($firstPeriod, $repeatFreq * 7, $repeatEnd, $timezone);
+    public function __construct(
+        PeriodInterface $firstPeriod,
+        $repeatFreq,
+        $repeatEnd,
+        DateTimeZone $timezone,
+        $resourceIds
+    ) {
+        parent::__construct($firstPeriod, $repeatFreq * 7, $repeatEnd, $timezone, $resourceIds);
     }
 }
