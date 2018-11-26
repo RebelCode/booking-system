@@ -4,8 +4,7 @@ namespace RebelCode\Bookings\Availability;
 
 use Dhii\Factory\FactoryInterface;
 use Dhii\Time\PeriodInterface;
-use RebelCode\Bookings\Util\Time\IntersectPeriodsCapableTrait;
-use RebelCode\Bookings\Util\Time\Period;
+use RebelCode\Bookings\Availability\Util\IntersectAvailabilityPeriodsCapableTrait;
 use stdClass;
 use Traversable;
 
@@ -21,7 +20,7 @@ use Traversable;
 class IntersectionAvailability implements AvailabilityInterface
 {
     /* @since [*next-version*] */
-    use IntersectPeriodsCapableTrait;
+    use IntersectAvailabilityPeriodsCapableTrait;
 
     /**
      * The children availabilities.
@@ -33,7 +32,7 @@ class IntersectionAvailability implements AvailabilityInterface
     protected $children;
 
     /**
-     * Optional period factory to use.
+     * Optional availability period factory to use.
      *
      * @since [*next-version*]
      *
@@ -47,7 +46,7 @@ class IntersectionAvailability implements AvailabilityInterface
      * @since [*next-version*]
      *
      * @param AvailabilityInterface[]|stdClass|Traversable $children      The children availabilities.
-     * @param FactoryInterface|null                        $periodFactory Optional period factory to use.
+     * @param FactoryInterface|null                        $periodFactory Optional availability period factory to use.
      */
     public function __construct($children = [], FactoryInterface $periodFactory = null)
     {
@@ -62,20 +61,41 @@ class IntersectionAvailability implements AvailabilityInterface
      */
     public function getAvailablePeriods(PeriodInterface $range)
     {
-        $periods = [$range];
-
-        // Process each availability
-        foreach ($this->children as $availability) {
-            // Use the previous availabilities' periods as ranges to get the next's available periods
-            $newPeriods = [];
-            foreach ($periods as $_range) {
-                $availPeriods = $availability->getAvailablePeriods($_range);
-                $newPeriods   = array_merge($newPeriods, $availPeriods);
-            }
-            $periods = $newPeriods;
+        // Return no periods if this availability has no children
+        if (count($this->children) === 0) {
+            return [];
         }
 
-        return $periods;
+        $results = null;
+
+        foreach ($this->children as $child) {
+            // Get the child's periods
+            $cPeriods = $child->getAvailablePeriods($range);
+
+            // If this is the first pass, use these periods as the temporary results
+            if ($results === null) {
+                $results = $cPeriods;
+                continue;
+            }
+
+            // Prepare a new results list
+            $newResults = [];
+            // Iterate the existing result periods and the child periods that were just obtained
+            foreach ($results as $rPeriod) {
+                foreach ($cPeriods as $cPeriod) {
+                    // Intersect each period and if not null, add to the new results list
+                    $iPeriod = $this->_intersectAvailabilityPeriods($rPeriod, $cPeriod);
+                    if ($iPeriod !== null) {
+                        $newResults[] = $iPeriod;
+                    }
+                }
+            }
+
+            // Copy the new results list into the real results list
+            $results = $newResults;
+        }
+
+        return $results;
     }
 
     /**
@@ -83,15 +103,16 @@ class IntersectionAvailability implements AvailabilityInterface
      *
      * @since [*next-version*]
      */
-    protected function _createPeriod($start, $end)
+    protected function _createAvailabilityPeriod($start, $end, $resourceIds)
     {
         if ($this->periodFactory === null) {
-            return new Period($start, $end);
+            return new AvailabilityPeriod($start, $end, $resourceIds);
         }
 
         return $this->periodFactory->make([
-            'start' => $start,
-            'end'   => $end,
+            'start'        => $start,
+            'end'          => $end,
+            'resource_ids' => $resourceIds,
         ]);
     }
 }
