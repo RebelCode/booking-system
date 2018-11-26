@@ -6,6 +6,7 @@ use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Time\PeriodInterface;
+use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use RebelCode\Bookings\Availability\Util\CreateAvailabilityPeriodCapableTrait;
 use RebelCode\Bookings\Availability\Util\IntersectAvailabilityPeriodsCapableTrait;
 use stdClass;
@@ -27,6 +28,9 @@ class IntersectionAvailability implements AvailabilityInterface
 
     /* @since [*next-version*] */
     use CreateAvailabilityPeriodCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeIterableCapableTrait;
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
@@ -53,7 +57,7 @@ class IntersectionAvailability implements AvailabilityInterface
      */
     public function __construct($children = [], FactoryInterface $periodFactory = null)
     {
-        $this->children      = $children;
+        $this->children = $this->_normalizeIterable($children);
 
         $this->_setAvPeriodFactory($periodFactory);
     }
