@@ -17,7 +17,7 @@ use Traversable;
  *
  * This implementation calculates the subtraction of periods in its children. Periods taken from the first child are
  * passed through a subtraction algorithm to produce the periods of time that exclude periods from the remaining
- * children availabilities. Both time and resources are subtracted.
+ * children availabilities.
  *
  * @since [*next-version*]
  */

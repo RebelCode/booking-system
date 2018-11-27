@@ -14,7 +14,7 @@ use Traversable;
 trait SubtractAvailabilityPeriodsCapableTrait
 {
     /**
-     * Subtracts an availability period from another, both in terms of time and resources.
+     * Subtracts an availability period from another.
      *
      * @since [*next-version*]
      *
@@ -41,7 +41,7 @@ trait SubtractAvailabilityPeriodsCapableTrait
         }
 
         $periods   = [];
-        $resources = array_diff($p1->getResourceIds(), $p2->getResourceIds());
+        $resources = $p1->getResourceIds();
 
         // If p2 starts during p1, create a period from the start of p1 till the start of p2
         // p1 [---------]
