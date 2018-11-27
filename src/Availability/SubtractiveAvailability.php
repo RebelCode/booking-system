@@ -8,23 +8,23 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Time\PeriodInterface;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use RebelCode\Bookings\Availability\Util\CreateAvailabilityPeriodCapableTrait;
-use RebelCode\Bookings\Availability\Util\IntersectAvailabilityPeriodsCapableTrait;
+use RebelCode\Bookings\Availability\Util\SubtractAvailabilityPeriodsCapableTrait;
 use stdClass;
 use Traversable;
 
 /**
- * An availability implementation that provides only the intersecting available periods of its children.
+ * An availability implementation that only provides periods from the first child that aren't in subsequent children.
  *
- * This implementation calculates the available periods of time that are common for all of its children availabilities.
- * This is accomplished by iterating over each child and using the previous children's available periods as input for
- * the next child.
+ * This implementation calculates the subtraction of periods in its children. Periods taken from the first child are
+ * passed through a subtraction algorithm to produce the periods of time that exclude periods from the remaining
+ * children availabilities.
  *
  * @since [*next-version*]
  */
-class IntersectionAvailability implements AvailabilityInterface
+class SubtractiveAvailability implements AvailabilityInterface
 {
     /* @since [*next-version*] */
-    use IntersectAvailabilityPeriodsCapableTrait;
+    use SubtractAvailabilityPeriodsCapableTrait;
 
     /* @since [*next-version*] */
     use CreateAvailabilityPeriodCapableTrait;
@@ -91,11 +91,9 @@ class IntersectionAvailability implements AvailabilityInterface
             // Iterate the existing result periods and the child periods that were just obtained
             foreach ($results as $rPeriod) {
                 foreach ($cPeriods as $cPeriod) {
-                    // Intersect each period and if not null, add to the new results list
-                    $iPeriod = $this->_intersectAvailabilityPeriods($rPeriod, $cPeriod);
-                    if ($iPeriod !== null) {
-                        $newResults[] = $iPeriod;
-                    }
+                    // Subtract the child period from the recorded period, and add to the new results list
+                    $iPeriods   = $this->_subtractAvailabilityPeriods($rPeriod, $cPeriod);
+                    $newResults = array_merge($newResults, $iPeriods);
                 }
             }
 

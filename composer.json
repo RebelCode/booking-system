@@ -13,7 +13,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^5.5 | ^7.0",
-        "rebelcode/booking-system-interface": "dev-initial-interfaces",
+        "rebelcode/booking-system-interface": "dev-develop as 0.1-alpha1",
         "rebelcode/time-abstract": "^0.1",
         "dhii/data-state-interface": "^0.1-alpha5",
         "dhii/data-state-abstract": "^0.1-alpha3",
