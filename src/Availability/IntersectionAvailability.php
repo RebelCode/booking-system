@@ -80,8 +80,8 @@ class IntersectionAvailability implements AvailabilityInterface
             // Get the child's periods
             $cPeriods = $child->getAvailablePeriods($range);
 
-            // If this is the first pass, use these periods as the temporary results
-            if ($results === null) {
+            // If there are no results yet, use this child's periods as the temporary results
+            if ($results === null || count($results) === 0) {
                 $results = $cPeriods;
                 continue;
             }
