@@ -88,12 +88,28 @@ class SubtractiveAvailability implements AvailabilityInterface
 
             // Prepare a new results list
             $newResults = [];
-            // Iterate the existing result periods and the child periods that were just obtained
+            // Iterate the existing result periods to apply subtraction to each
             foreach ($results as $rPeriod) {
+                // The periods to be subjected to subtraction.
+                // Initially this will be just the current iteration period from the existing result set.
+                // The below iteration will go through every period from the current child and subtract each period
+                // from these "subjected" periods. On each iteration, these subjected periods may grow in number but
+                // smaller in duration.
+                $sPeriods = [$rPeriod];
                 foreach ($cPeriods as $cPeriod) {
-                    // Subtract the child period from the recorded period, and add to the new results list
-                    $iPeriods   = $this->_subtractAvailabilityPeriods($rPeriod, $cPeriod);
-                    $newResults = array_merge($newResults, $iPeriods);
+                    foreach ($sPeriods as $sPeriod) {
+                        // Subtract the child period from the subjected period.
+                        // The results are to be the new periods to be subjected to further subtraction
+                        $sPeriods = $this->_subtractAvailabilityPeriods($sPeriod, $cPeriod);
+                        // Stop prematurely if there is nothing left to subtract from
+                        if (empty($sPeriods)) {
+                            break 2;
+                        }
+                    }
+                }
+                // Merge whatever remains of the period into the new result set
+                if (!empty($sPeriods)) {
+                    $newResults = array_merge($newResults, $sPeriods);
                 }
             }
 
